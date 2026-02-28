@@ -3,11 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const navLinks = [
-  { label: "Projects", href: "/projects" },
+const navLinks = [,
   { label: "Profile", href: "/profile" },
   { label: "Network", href: "/network" },
-  { label: "Communities", href: "/communities" },
+  { label: "Communities", href: "/findCommunity" },
 ];
 
 export default function Navbar() {
@@ -20,7 +19,7 @@ export default function Navbar() {
 
           {/* Site Title */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
             <span className="text-xl font-bold text-gray-900 tracking-tight">
@@ -34,7 +33,7 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors duration-150"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors duration-150"
               >
                 {link.label}
               </Link>
@@ -43,12 +42,12 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <Link href={"/login"} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Sign in
-            </button>
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-150">
+            </Link>
+            <Link href={"/signup"} className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-150">
               Get Started
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,7 +80,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+              className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors"
             >
               {link.label}
             </Link>
@@ -90,7 +89,7 @@ export default function Navbar() {
             <button className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 text-left">
               Sign in
             </button>
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            <button className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
               Get Started
             </button>
           </div>
