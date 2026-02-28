@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import type { Post } from "@/types/post";
 
 // --- Mock Data ---
 const NEWS_ITEMS = [
@@ -13,7 +12,7 @@ const NEWS_ITEMS = [
   { id: 6, title: "Community Hackathon Results", tag: "News", color: "from-rose-500 to-rose-700" },
 ];
 
-const COMMUNITY_POSTS:Post[] = [
+const COMMUNITY_POSTS = [
   {
     id: 1,
     author: "alex_dev",

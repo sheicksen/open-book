@@ -3,53 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const USERS = [
-  {
-    name: "John",
-    email: "johndoe@anemail.com",
-    password: "12345678"
-  }
-]
-
-/**
- * queryUser
- * Finds if a matching user exists in the database
- * Returns the name of the user or incorrect password
- * 
- * TOO BE REPLACED WITH PROPER DATABASE QUERY
- */
-function queryUser({email, password}):string{
-  const found_users = USERS.filter((user)=>(user.email == email && user.password == password));
-  if (found_users.length > 0){
-    return found_users[0].name;
-  }
-  return "PASS_ERR";
-}
-
 export default function SignupPage() {
-  const [form, setForm] = useState({email: "", password: ""});
-  const [name, setName] = useState("");
-  const [formError, setFormError] = useState(false);
+  const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const update = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const valid =
+    form.username.length >= 3 &&
+    form.email.includes("@") &&
     form.password.length >= 8 &&
-    form.email.includes("@");
+    form.password === form.confirm;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (valid){
-      const status = queryUser(form)
-      if ( status != "PASS_ERR"){
-        setName(status);
-        setSubmitted(true);
-      } else {
-        setFormError(true)
-      }
-    }
+    if (valid) setSubmitted(true);
   };
 
   if (submitted) {
@@ -62,9 +31,9 @@ export default function SignupPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">You&apos;re in!</h2>
-          <p className="text-sm text-gray-500 mb-6">Welcome back, <span className="font-semibold text-gray-700">{name}</span>.</p>
-          <Link href="/dashboard" className="block w-full bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2.5 rounded-lg text-center transition-colors">
-            Go to Dashboard →
+          <p className="text-sm text-gray-500 mb-6">Welcome to OpenBook, <span className="font-semibold text-gray-700">{form.username}</span>.</p>
+          <Link href="/findCommunity" className="block w-full bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2.5 rounded-lg text-center transition-colors">
+            Find a community →
           </Link>
         </div>
       </div>
@@ -87,15 +56,37 @@ export default function SignupPage() {
               <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-base">OB</span>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Sign in to your account</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
               <p className="text-sm text-gray-500 mt-1">
-                Need to make one?{" "}
-                <Link href="/signup" className="text-teal-600 hover:text-teal-700 font-medium">Sign up</Link>
+                Already have one?{" "}
+                <Link href="/login" className="text-teal-600 hover:text-teal-700 font-medium">Sign in</Link>
               </p>
             </div>
 
             {/* Form */}
             <div className="space-y-4">
+              {/* Username */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </span>
+                  <input
+                    name="username"
+                    value={form.username}
+                    onChange={update}
+                    placeholder="your_handle"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                  />
+                </div>
+                {form.username.length > 0 && form.username.length < 3 && (
+                  <p className="text-xs text-rose-500 mt-1">Must be at least 3 characters</p>
+                )}
+              </div>
+
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
@@ -150,13 +141,50 @@ export default function SignupPage() {
                     )}
                   </button>
                 </div>
-          
+                {/* Strength bar */}
+                {form.password.length > 0 && (
+                  <div className="mt-2 flex gap-1">
+                    {[1, 2, 3, 4].map((i) => {
+                      const strength = Math.min(4, Math.floor(form.password.length / 3));
+                      const colors = ["bg-rose-400", "bg-orange-400", "bg-yellow-400", "bg-emerald-400"];
+                      return (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors ${i <= strength ? colors[strength - 1] : "bg-gray-200"}`}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {/* Form Error */}
-              {formError && 
-              <span className="text-sm text-red-500 mt-1">Username or password was incorrect</span>
-              }
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </span>
+                  <input
+                    name="confirm"
+                    type={showPass ? "text" : "password"}
+                    value={form.confirm}
+                    onChange={update}
+                    placeholder="Re-enter password"
+                    className={`w-full pl-9 pr-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition ${
+                      form.confirm.length > 0 && form.confirm !== form.password
+                        ? "border-rose-300 bg-rose-50"
+                        : "border-gray-200"
+                    }`}
+                  />
+                </div>
+                {form.confirm.length > 0 && form.confirm !== form.password && (
+                  <p className="text-xs text-rose-500 mt-1">Passwords don&apost;t match</p>
+                )}
+              </div>
+
               {/* Submit */}
               <button
                 onClick={handleSubmit}
@@ -167,7 +195,7 @@ export default function SignupPage() {
                     : "bg-gray-100 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                Sign in
+                Create Account
               </button>
             </div>
           </div>

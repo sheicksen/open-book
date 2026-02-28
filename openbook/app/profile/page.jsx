@@ -236,7 +236,7 @@ export default function ProfilePage() {
         <aside className="w-full lg:w-64 flex-none">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4">
-              {USER.name.split(" ")[0]}'s Communities
+              {USER.name.split(" ")[0]}&apost;s Communities
             </p>
             <div className="space-y-2">
               {USER.communities.map((c) => (
