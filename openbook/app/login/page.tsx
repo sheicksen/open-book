@@ -90,7 +90,7 @@ export default function SignupPage() {
               <h1 className="text-2xl font-bold text-gray-900">Sign in to your account</h1>
               <p className="text-sm text-gray-500 mt-1">
                 Need to make one?{" "}
-                <Link href="/signup" className="text-teal-600 hover:text-teal-700 font-medium">Sign in</Link>
+                <Link href="/signup" className="text-teal-600 hover:text-teal-700 font-medium">Sign up</Link>
               </p>
             </div>
 
