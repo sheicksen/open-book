@@ -1,0 +1,17 @@
+import Navbar from "../components/nav"
+export default function ProfileLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {/* Layout UI */}
+        {/* Place children where you want to render a page or nested layout */}
+        <Navbar></Navbar>
+        <main>{children}</main>
+      </body>
+    </html>
+  )
+}
