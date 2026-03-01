@@ -2,11 +2,8 @@
 // Singleton Prisma client — prevents exhausting DB connections in development
 // due to Next.js hot-reloading creating multiple instances.
 
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "../generated/prisma/client";
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 
-const globalForPrisma = globalThis;
-
-export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient({ log: ["query"] });
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export const prisma = new PrismaClient({ adapter });
