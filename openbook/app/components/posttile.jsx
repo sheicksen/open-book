@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 
+/**
+ * getRandomColor
+ * Chooses a random color background for tile cards
+ * @returns tailwind-css gradient: string
+ */
+function getRandomColor(){
+  if (Math.random() > 0.6){
+    return "from-emerald-500 to-teal-600";
+  } else if (Math.random() > 0.3){
+    return "from-pink-400 to-rose-500";
+  } else if (Math.random() > 0){
+    return "from-violet-400 to-indigo-500";
+  }
+}
+
+
 export function PostTile({ post }) {
   const [liked, setLiked] = useState(false);
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
       {post.image && (
-        <div className={`h-32 bg-gradient-to-br ${post.imageBg} flex items-center justify-center`}>
-          <span className="text-white/50 text-xs font-medium uppercase tracking-widest">Preview</span>
+        <div className={`h-32 bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center`}>
+          <img src={post.image}></img>
         </div>
       )}
       <div className="p-4 flex flex-col flex-1 gap-3">

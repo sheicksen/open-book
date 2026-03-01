@@ -18,7 +18,7 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    const VALID_TAGS = ["Post", "News", "Tutorial"];
+    const VALID_TAGS = ["Post", "Project", "Tutorial"];
     if (!VALID_TAGS.includes(tag)) {
         return NextResponse.json({ error: "Invalid tag." }, { status: 400 });
     }

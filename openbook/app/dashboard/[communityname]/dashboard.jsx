@@ -105,7 +105,7 @@ const COMMUNITY_POSTS = [
 ];
 
 // --- Goal Progress Ring ---
-function ProgressRing({ percent = 75 }) {
+function ProgressRing({ percent = 1 }) {
   const r = 52;
   const circ = 2 * Math.PI * r;
   const dash = (percent / 100) * circ;
@@ -116,7 +116,7 @@ function ProgressRing({ percent = 75 }) {
         <circle
           cx="65" cy="65" r={r}
           fill="none"
-          stroke="#4f46e5"
+          stroke="#2e735b"
           strokeWidth="12"
           strokeDasharray={`${dash} ${circ}`}
           strokeLinecap="round"
@@ -128,10 +128,10 @@ function ProgressRing({ percent = 75 }) {
       </svg>
       <div className="text-center">
         <p className="text-sm font-semibold text-gray-700">Monthly Goal</p>
-        <p className="text-xs text-gray-400">15 / 20 tasks complete</p>
+        <p className="text-xs text-gray-400">0 / 20 tasks complete</p>
       </div>
       <div className="w-full space-y-1">
-        {[["Contributions", 80], ["Posts", 60], ["Reviews", 40]].map(([label, val]) => (
+        {[["Contributions", 0], ["Posts", 0], ["Reviews", 0]].map(([label, val]) => (
           <div key={label} className="flex items-center gap-2">
             <span className="text-xs text-gray-500 w-20">{label}</span>
             <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -236,7 +236,7 @@ export default function CommunityDashboard({content}) {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {COMMUNITY_POSTS.map((post) => (
+              {content.posts.map((post) => (
                 <PostTile key={post.id} post={post} />
               ))}
             </div>

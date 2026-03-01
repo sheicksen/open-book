@@ -5,11 +5,11 @@ import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { useParams } from 'next/navigation';
 
-const TAGS = ["Post", "News", "Tutorial"];
+const TAGS = ["Post", "Project", "Tutorial"];
 
 const TAG_STYLES = {
   Post:     { pill: "bg-violet-100 text-violet-700", ring: "ring-violet-400", dot: "bg-violet-400" },
-  News:     { pill: "bg-sky-100 text-sky-700",       ring: "ring-sky-400",    dot: "bg-sky-400"    },
+  Project:     { pill: "bg-sky-100 text-sky-700",       ring: "ring-sky-400",    dot: "bg-sky-400"    },
   Tutorial: { pill: "bg-teal-100 text-teal-700",     ring: "ring-teal-400",   dot: "bg-teal-400"   },
 };
 
