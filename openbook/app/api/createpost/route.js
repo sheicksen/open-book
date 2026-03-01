@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 
 export async function POST(req) {
     const session = await getServerSession(authOptions);
@@ -11,10 +9,10 @@ export async function POST(req) {
         return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
   try {
-    const { title, body, image, tag, communityId} = await req.json();
-
+    const { title, body, image, tag, community} = await req.json();
+    console.log(title, body, image, tag, community);
     // Basic validation
-    if (!title|| !authorId || !communityId || !tag) {
+    if (!title|| !body || !community || !tag) {
       return NextResponse.json(
         { error: "Title, tag, and community id fields are required." },
         { status: 400 }
@@ -24,14 +22,26 @@ export async function POST(req) {
     if (!VALID_TAGS.includes(tag)) {
         return NextResponse.json({ error: "Invalid tag." }, { status: 400 });
     }
+    const communityId = await prisma.community.findUnique({
+        where: {name:community}
+    });
+    if (!communityId){
+        return NextResponse.json(
+            {message: "Could not resolve community id", communityName:community},
+            {status: 500}
+        )
+    }
+
+
     const post = await prisma.post.create({
       data: {
         title:title, 
         body:body, 
-        image:image ?? null, 
+        image:image ?? null,
+        likes: 0,
         tag:tag, 
         authorId:session.user.id, 
-        communityId:communityId},
+        communityId:communityId.id},
     });
     return NextResponse.json(
       { message: "Post created.", postId: post.id },

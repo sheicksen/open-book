@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useParams } from 'next/navigation';
 
 const TAGS = ["Post", "News", "Tutorial"];
 
@@ -12,9 +13,10 @@ const TAG_STYLES = {
   Tutorial: { pill: "bg-teal-100 text-teal-700",     ring: "ring-teal-400",   dot: "bg-teal-400"   },
 };
 
-export default function CreatePostPage({community}) {
+export default function CreatePostPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const {community} = useParams();
 
   const [form, setForm] = useState({ title: "", body: "", tag: "", image: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -52,7 +54,7 @@ export default function CreatePostPage({community}) {
         return;
       }
 
-      redirect(`/dashboard/${community.name}`);
+      redirect(`/dashboard/${community}`);
     } catch {
       setError("Network error — please try again.");
     } finally {

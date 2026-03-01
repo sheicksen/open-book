@@ -2,6 +2,7 @@
 
 import { PostTile } from "../../components/posttile"
 import { useState, useRef } from "react";
+import Link from "next/link";
 
 // --- Mock Data ---
 const NEWS_ITEMS = [
@@ -230,9 +231,9 @@ export default function CommunityDashboard({content}) {
           <section className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Community Projects / Posts</h2>
-              <button className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded-lg transition-colors">
+              <Link href={`/createpost/${content.name}`} className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded-lg transition-colors">
                 + New Post
-              </button>
+              </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {COMMUNITY_POSTS.map((post) => (
