@@ -1,7 +1,7 @@
 "use client";
 
 import { PostTile } from "../../components/posttile"
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 
 // --- Mock Data ---

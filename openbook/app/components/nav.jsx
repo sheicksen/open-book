@@ -34,7 +34,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1">
               <Link
                 key={"Communities"}
-                href={"/findCommunities"}
+                href={"/findCommunity"}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors duration-150"
               >
                 {"Communities"}
