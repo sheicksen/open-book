@@ -30,7 +30,6 @@ function queryUser({email, password}){
 
 export default function SignupPage() {
   const [form, setForm] = useState({email: "", password: ""});
-  const [name, setName] = useState("");
   const [formError, setFormError] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -49,7 +48,7 @@ export default function SignupPage() {
   });
   if (!res.ok) {
     const { error } = await res.json();
-    setError(error);
+    setFormError(error);
     return;
   }
   setSubmitted(true);
@@ -64,7 +63,7 @@ export default function SignupPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">You&apos;re in!</h2>
-          <p className="text-sm text-gray-500 mb-6">Welcome back, <span className="font-semibold text-gray-700">{name}</span>.</p>
+          <p className="text-sm text-gray-500 mb-6">Welcome back.</p>
           <Link href="/dashboard" className="block w-full bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2.5 rounded-lg text-center transition-colors">
             Go to Dashboard →
           </Link>
