@@ -2,27 +2,15 @@
 // Central NextAuth configuration — imported by the API route and anywhere
 // you need to read the session server-side.
 
-import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
 
   providers: [
-    // ── OAuth providers ──────────────────────────────────────────────────────
-    GithubProvider({
-      clientId:     process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }),
-    GoogleProvider({
-      clientId:     process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
 
     // ── Email + password ─────────────────────────────────────────────────────
     CredentialsProvider({
@@ -59,15 +47,15 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id       = user.id;
-        token.username = (user as any).username;
+        token.username = user.username;
       }
       return token;
     },
     // Expose id and username on the client-side session object
     async session({ session, token }) {
       if (session.user) {
-        session.user.id       = token.id as string;
-        session.user.username = token.username as string;
+        session.user.id       = token.id;
+        session.user.username = token.username;
       }
       return session;
     },
