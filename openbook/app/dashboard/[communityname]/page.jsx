@@ -1,4 +1,4 @@
-import CommunityDashboard from "./dashboard"
+import CommunityDashboard from "./dashboard";
 import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage({params}) {
@@ -11,6 +11,7 @@ export default async function DashboardPage({params}) {
           },
       }),
   ]);
+
   console.log("Dash content:", communityProfile);
   return <div>
     <CommunityDashboard content={communityProfile}></CommunityDashboard>

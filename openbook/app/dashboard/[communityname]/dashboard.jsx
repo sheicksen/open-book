@@ -128,7 +128,7 @@ function ProgressRing({ percent = 1 }) {
       </svg>
       <div className="text-center">
         <p className="text-sm font-semibold text-gray-700">Monthly Goal</p>
-        <p className="text-xs text-gray-400">0 / 20 tasks complete</p>
+        <p className="text-xs text-gray-400"> / 20 tasks complete</p>
       </div>
       <div className="w-full space-y-1">
         {[["Contributions", 0], ["Posts", 0], ["Reviews", 0]].map(([label, val]) => (

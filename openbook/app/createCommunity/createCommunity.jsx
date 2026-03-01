@@ -13,18 +13,30 @@ export default function CreateCommunity() {
     const update = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
     const handleSubmit = async () => {
-        let data = {};
-        if (form.image == ""){
-            data = {name: form.name, description: form.description, image: "default"}
-        } else {
-           data = {name: form.name, description: form.description, image: form.image};
-        }
         const res = await fetch("/api/createCommunity", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+            name: form.name.trim(),
+            description:  form.description.trim(),
+            image: form.image.trim() || null,
+            }),
         });
         if (!res.ok){
+            const { error } = await res.json();
+            setError(error);
+            console.log(error);
+            return;
+        }
+        const res2 = await fetch('/api/contentGeneration', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                theme: form.name.trim(),
+                number: 1
+         }),
+        });
+        if (!res2.ok){
             const { error } = await res.json();
             setError(error);
             console.log(error);

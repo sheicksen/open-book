@@ -10,7 +10,6 @@ export async function POST(req) {
     }
   try {
     const { title, body, image, tag, community} = await req.json();
-    console.log(title, body, image, tag, community);
     // Basic validation
     if (!title|| !body || !community || !tag) {
       return NextResponse.json(
