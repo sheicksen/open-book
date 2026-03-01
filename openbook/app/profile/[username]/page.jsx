@@ -99,17 +99,11 @@ const POSTS = [
   },
 ];
 
-
-export default async function ProfilePage({params}) {
-  const username = "Mary";
-
-  if (!username){redirect("/login")}
-
-//Fetch queried user records
-  const [session, profileUser] = await Promise.all([
+async function getProfile(user){
+    const [session, profileUser] = await Promise.all([
       getServerSession(authOptions),
       prisma.user.findUnique({
-        where: {username:username},
+        where: {username: user},
         include: {
           posts: { orderBy: { createdAt: "desc" } },
           communities: { include: { community: true } },
@@ -117,6 +111,24 @@ export default async function ProfilePage({params}) {
         },
     }),
   ]);
+  return [session, profileUser];
+}
+
+export default async function ProfilePage({params}) {
+  const username = await params; 
+
+  const [session, profileUser] = await Promise.all([
+      getServerSession(authOptions),
+      prisma.user.findUnique({
+        where: {username: username.username},
+        include: {
+          posts: { orderBy: { createdAt: "desc" } },
+          communities: { include: { community: true } },
+          _count: { select: { followers: true, following: true } },
+        },
+    }),
+  ]);
+  if (!username){redirect("/login")}
 
   if (!profileUser) notFound();
   const isOwnProfile = session?.user.id === profileUser.id;

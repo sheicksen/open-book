@@ -14,8 +14,8 @@ export async function POST(req) {
     }
 
     // Check for existing community by that name
-    const existing = await prisma.community.findFirst({
-      where:  {name},
+    const existing = await prisma.community.findUnique({
+      where:  {name}
     });
 
     if (existing) {
@@ -28,7 +28,6 @@ export async function POST(req) {
     const community = await prisma.community.create({
       data: {name:name, description:description, icon:image},
     });
-
     return NextResponse.json(
       { message: "Community created.", communityId: community.id },
       { status: 201 }
