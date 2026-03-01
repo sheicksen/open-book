@@ -224,7 +224,7 @@ export default function CommunityDashboard({content}) {
           {/* Goal Progress */}
           <aside className="w-64 flex-none bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Goal Progress</h2>
-            <ProgressRing percent={75} />
+            <ProgressRing percent={1} />
           </aside>
 
           {/* Community Posts */}
