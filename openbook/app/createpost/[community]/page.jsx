@@ -12,7 +12,7 @@ const TAG_STYLES = {
   Tutorial: { pill: "bg-teal-100 text-teal-700",     ring: "ring-teal-400",   dot: "bg-teal-400"   },
 };
 
-export default function CreatePostPage({communityinfo}) {
+export default function CreatePostPage({community}) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -42,7 +42,7 @@ export default function CreatePostPage({communityinfo}) {
           body:  form.body.trim(),
           tag:   form.tag,
           image: form.image.trim() || null,
-          communityId: communityinfo.id
+          community: community
         }),
       });
 
@@ -52,7 +52,7 @@ export default function CreatePostPage({communityinfo}) {
         return;
       }
 
-      redirect(`/dashboard/${communityinfo.name}`);
+      redirect(`/dashboard/${community.name}`);
     } catch {
       setError("Network error — please try again.");
     } finally {
