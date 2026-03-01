@@ -3,19 +3,19 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req) {
   try {
-    const { name, description } = await req.json();
+    const { name, description, image} = await req.json();
 
     // Basic validation
     if (!name|| !description) {
       return NextResponse.json(
-        { error: "All fields are required." },
+        { error: "Name and description fields are required." },
         { status: 400 }
       );
     }
 
     // Check for existing community by that name
-    const existing = await prisma.user.findFirst({
-      where:  {name },
+    const existing = await prisma.community.findFirst({
+      where:  {name},
     });
 
     if (existing) {
@@ -25,8 +25,8 @@ export async function POST(req) {
       );
     }
 
-    const community = await prisma.user.create({
-      data: {name:name, description:description },
+    const community = await prisma.community.create({
+      data: {name:name, description:description, icon:image},
     });
 
     return NextResponse.json(
