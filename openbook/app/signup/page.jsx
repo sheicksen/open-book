@@ -18,7 +18,6 @@ export default function SignupPage() {
     form.password === form.confirm;
 
 const handleSubmit = async () => {
-  // 1. Create the account
   const res = await fetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -31,6 +30,7 @@ const handleSubmit = async () => {
     return;
   }
 
+  setSubmitted(true);
   // 2. Auto sign-in after registration
   await signIn("credentials", {
     email: form.email,

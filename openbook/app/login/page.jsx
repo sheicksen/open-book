@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 const USERS = [
@@ -40,19 +41,19 @@ export default function SignupPage() {
     form.password.length >= 8 &&
     form.email.includes("@");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (valid){
-      const status = queryUser(form)
-      if ( status != "PASS_ERR"){
-        setName(status);
-        setSubmitted(true);
-      } else {
-        setFormError(true)
-      }
-    }
-  };
-
+  const handleSubmit = async () => {
+  const res = await signIn("credentials", {
+    email: form.email,
+    password: form.password,
+    callbackUrl: "/profile",
+  });
+  if (!res.ok) {
+    const { error } = await res.json();
+    setError(error);
+    return;
+  }
+  setSubmitted(true);
+};
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
