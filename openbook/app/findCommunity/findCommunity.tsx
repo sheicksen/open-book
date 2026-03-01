@@ -15,7 +15,7 @@ export default function Communities() {
             id: "1",
             name: "Tech Enthusiasts",
             description: "A community for people passionate about technology and innovation.",
-            image: "",
+            image: "https://th.bing.com/th/id/OIP.nPJp_1Q65h1G5nYOkDYMOgHaEJ?w=306&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
             members: 1200
         },
         {
@@ -89,8 +89,18 @@ export default function Communities() {
                             >
                                 {/* Avatar placeholder + name row */}
                                 <div className="flex items-center gap-3 mb-2">
+                                    
                                     <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                                        {community.name.charAt(0)}
+                                        {
+                                        community.image ? (
+                                            <img
+                                                src={community.image}
+                                                alt={community.name}
+                                                className="w-full h-full object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <span className="text-xs">{community.name.charAt(0)}</span>
+                                        )}
                                     </div>
                                     <h3 className="text-base font-semibold text-teal-700 group-hover:text-emerald-600 transition-colors">
                                         {community.name}
