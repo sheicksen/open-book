@@ -1,7 +1,9 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import { PostTile } from "../../components/posttile";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 
 const USER = {
   name: "John Doe",
@@ -97,47 +99,21 @@ const POSTS = [
   },
 ];
 
-function PostTile({ post }) {
-  const [liked, setLiked] = useState(false);
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-      {post.image && (
-        <div className={`h-32 bg-gradient-to-br ${post.imageBg} flex items-center justify-center`}>
-          <span className="text-white/50 text-xs font-medium uppercase tracking-widest">Preview</span>
-        </div>
-      )}
-      <div className="p-4 flex flex-col flex-1 gap-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-semibold text-gray-900 leading-snug">{post.title}</h3>
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-none ${post.tagColor}`}>{post.tag}</span>
-        </div>
-        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{post.body}</p>
-        <div className="flex items-center gap-4 mt-auto pt-2 border-t border-gray-100">
-          <button
-            onClick={() => setLiked(!liked)}
-            className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${liked ? "text-teal-600" : "text-gray-400 hover:text-teal-500"}`}
-          >
-            <svg className="w-4 h-4" fill={liked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            {post.likes + (liked ? 1 : 0)}
-          </button>
-          <button className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            {post.comments}
-          </button>
-          <span className="ml-auto text-xs text-gray-400">{post.time}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("posts");
-
+export default async function ProfilePage({name}) {
+  const [session, profileUser] = await Promise.all([
+    getServerSession(authOptions),
+    prisma.user.findUnique({
+      where: { OR:[{ username: name}, {username: "Bob"}]},
+      include: {
+        posts: { orderBy: { createdAt: "desc" } },
+        communities: { include: { community: true } },
+        _count: { select: { followers: true, following: true } },
+      },
+    }),
+  ]);
+  if (!profileUser) notFound();
+  const isOwnProfile = session?.user.id === profileUser.id;
   return (
     <div className="min-h-screen bg-gray-100">
 
@@ -148,8 +124,8 @@ export default function ProfilePage() {
 
             {/* Avatar */}
             <div className="relative flex-none">
-              <div className={`w-28 h-28 rounded-full bg-gradient-to-br ${USER.avatarColor} flex items-center justify-center shadow-md`}>
-                <span className="text-white font-bold text-3xl">{USER.initials}</span>
+              <div className={`w-28 h-28 rounded-full bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center shadow-md`}>
+                <span className="text-white font-bold text-3xl">{profileUser.name[0]}</span>
               </div>
             </div>
 
@@ -157,16 +133,15 @@ export default function ProfilePage() {
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{USER.name}</h1>
-                  <p className="text-sm text-gray-400 font-medium">@{USER.username}</p>
-                  <p className="text-sm text-gray-500 mt-2 max-w-sm">{USER.bio}</p>
+                  <h1 className="text-2xl font-bold text-gray-900">{profileUser.name}</h1>
+                  <p className="text-sm text-gray-400 font-medium">@{profileUser.username}</p>
 
                   {/* Stats row */}
                   <div className="flex items-center gap-5 mt-4">
                     {[
-                      ["Posts", USER.posts],
-                      ["Followers", USER.followers],
-                      ["Following", USER.following],
+                      ["Posts", profileUser.posts.length],
+                      ["Followers", profileUser.followers],
+                      ["Following", profileUser.following],
                     ].map(([label, val]) => (
                       <button key={label} className="text-center group">
                         <p className="text-base font-bold text-gray-900 group-hover:text-teal-600 transition-colors">{val}</p>
@@ -176,7 +151,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Action buttons */}
+                Action buttons
                 <div className="flex items-center gap-2">
                   <button className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors shadow-sm">
                     Follow
@@ -208,25 +183,6 @@ export default function ProfilePage() {
 
           </div>
         </div>
-
-        {/* Tab bar */}
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex gap-1 border-t border-gray-100">
-            {["posts", "projects", "tutorials"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-3 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
-                  activeTab === tab
-                    ? "border-teal-600 text-teal-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ── BODY ── */}
@@ -236,10 +192,10 @@ export default function ProfilePage() {
         <aside className="w-full lg:w-64 flex-none">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4">
-              {USER.name.split(" ")[0]}&apost;s Communities
+              {profileUser.name}&apost;s Communities
             </p>
             <div className="space-y-2">
-              {USER.communities.map((c) => (
+              {profileUser.communities.map((c) => (
                 <Link
                   key={c.name}
                   href={`/communities/${c.name.toLowerCase().replace(/\s+/g, "-")}`}
@@ -255,9 +211,11 @@ export default function ProfilePage() {
                 </Link>
               ))}
             </div>
-            <button className="w-full mt-3 text-xs text-teal-500 hover:text-teal-700 font-medium py-2 border border-dashed border-teal-200 rounded-xl hover:border-teal-400 transition-colors">
+            {isOwnProfile && 
+              <button className="w-full mt-3 text-xs text-teal-500 hover:text-teal-700 font-medium py-2 border border-dashed border-teal-200 rounded-xl hover:border-teal-400 transition-colors">
               + Join a community
-            </button>
+              </button>
+            }
           </div>
         </aside>
 
@@ -265,7 +223,7 @@ export default function ProfilePage() {
         <section className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-5">
             <p className="text-sm font-semibold text-gray-700 capitalize">{activeTab}</p>
-            <span className="text-xs text-gray-400">{POSTS.length} total</span>
+            <span className="text-xs text-gray-400">{profileUser.posts.length} total</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {POSTS.map((post) => (

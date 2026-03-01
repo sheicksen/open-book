@@ -1,9 +1,10 @@
-import Navbar from "../components/nav"
+import Navbar from "../../components/nav"
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  
   return (
     <html lang="en">
       <body>
