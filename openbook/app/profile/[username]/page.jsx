@@ -3,7 +3,7 @@ import { PostTile } from "../../components/posttile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const USER = {
   name: "John Doe",
@@ -100,23 +100,29 @@ const POSTS = [
 ];
 
 
-export default async function ProfilePage({name}) {
+export default async function ProfilePage({params}) {
+  const username = "Mary";
+
+  if (!username){redirect("/login")}
+
+//Fetch queried user records
   const [session, profileUser] = await Promise.all([
-    getServerSession(authOptions),
-    prisma.user.findUnique({
-      where: { OR:[{ username: name}, {username: "Bob"}]},
-      include: {
-        posts: { orderBy: { createdAt: "desc" } },
-        communities: { include: { community: true } },
-        _count: { select: { followers: true, following: true } },
-      },
+      getServerSession(authOptions),
+      prisma.user.findUnique({
+        where: {username:username},
+        include: {
+          posts: { orderBy: { createdAt: "desc" } },
+          communities: { include: { community: true } },
+          _count: { select: { followers: true, following: true } },
+        },
     }),
   ]);
+
   if (!profileUser) notFound();
   const isOwnProfile = session?.user.id === profileUser.id;
+
   return (
     <div className="min-h-screen bg-gray-100">
-
       {/* ── HEADER CARD ── */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-8">
@@ -140,8 +146,8 @@ export default async function ProfilePage({name}) {
                   <div className="flex items-center gap-5 mt-4">
                     {[
                       ["Posts", profileUser.posts.length],
-                      ["Followers", profileUser.followers],
-                      ["Following", profileUser.following],
+                      ["Followers", 0],
+                      ["Following", 0],
                     ].map(([label, val]) => (
                       <button key={label} className="text-center group">
                         <p className="text-base font-bold text-gray-900 group-hover:text-teal-600 transition-colors">{val}</p>
@@ -192,7 +198,7 @@ export default async function ProfilePage({name}) {
         <aside className="w-full lg:w-64 flex-none">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-4">
-              {profileUser.name}&apost;s Communities
+              {profileUser.name}&apos;s Communities
             </p>
             <div className="space-y-2">
               {profileUser.communities.map((c) => (
@@ -222,7 +228,7 @@ export default async function ProfilePage({name}) {
         {/* Posts grid */}
         <section className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-5">
-            <p className="text-sm font-semibold text-gray-700 capitalize">{activeTab}</p>
+            <p className="text-sm font-semibold text-gray-700 capitalize">Posts</p>
             <span className="text-xs text-gray-400">{profileUser.posts.length} total</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
