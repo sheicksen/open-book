@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "app/dashboard/[communityname]/page.jsx", "app/createCommunity/createCommunity.jsx", "app/api/auth/[...nextauth]/route.js", "app/api/auth/[...nextauth]/route.js", "lib/prisma.js", "lib/auth.js", "lib/prisma.js", "lib/auth.js", "app/page.jsx", "app/signup/page.jsx", "app/profile/page.jsx", "app/login/page.jsx", "app/dashboard/dashboard.jsx", "app/components/nav.jsx"  ],
   "exclude": ["node_modules"]
 }

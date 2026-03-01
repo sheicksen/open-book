@@ -1,16 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Community } from "../../types/community";
+import { redirect } from "next/dist/server/api-utils";
 
 const ITEMS_PER_PAGE = 10;
-
-export default function Communities() {
-    const [query, setQuery] = useState("");
-    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-    const sentinelRef = useRef<HTMLDivElement>(null);
-
-    var communities: Community[] = [
+const communities = [
         {
             id: "1",
             name: "Tech Enthusiasts",
@@ -26,7 +20,11 @@ export default function Communities() {
             members: 50000
         }
     ];
-    const filtered = communities.filter((c) =>
+export default function Communities({content}) {
+    const [query, setQuery] = useState("");
+    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+    const sentinelRef = useRef(null);
+    const filtered = content.filter((c) =>
     c.name.toLowerCase().includes(query.toLowerCase())
 );
     const visible = filtered.slice(0, visibleCount);
@@ -49,6 +47,21 @@ export default function Communities() {
         return () => observer.disconnect();
     }, [hasMore]);
 
+    const handleJoin = async (community) => {
+    const res = await fetch("/api/joincommunity", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        community: community
+    })
+     });
+
+     if (!res.ok){
+        console.log(res);
+        redirect("/findCommunity");
+     }
+     redirect(`/dashboard/${community}`);
+    };
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-12">
             <div className="max-w-2xl mx-auto">
@@ -112,13 +125,7 @@ export default function Communities() {
                                 </p>
 
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-400">
-                                        <span className="font-semibold text-teal-600">
-                                            {community.members.toLocaleString()}
-                                        </span>{" "}
-                                        members
-                                    </span>
-                                    <span className="text-xs font-semibold text-emerald-500 group-hover:underline">
+                                    <span onClick={()=>{handleJoin(community.name)}} className="text-xs font-semibold text-emerald-500 group-hover:underline">
                                         Join →
                                     </span>
                                 </div>

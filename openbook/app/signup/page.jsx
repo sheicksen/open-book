@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function SignupPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  
 
   const update = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -16,10 +18,27 @@ export default function SignupPage() {
     form.password.length >= 8 &&
     form.password === form.confirm;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (valid) setSubmitted(true);
-  };
+const handleSubmit = async () => {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: form.username, email: form.email, password: form.password }),
+  });
+
+  if (!res.ok) {
+    const { error } = await res.json();
+    setError(error);
+    return;
+  }
+
+  setSubmitted(true);
+  // 2. Auto sign-in after registration
+  await signIn("credentials", {
+    email: form.email,
+    password: form.password,
+    callbackUrl: "/findCommunity",
+  });
+};
 
   if (submitted) {
     return (

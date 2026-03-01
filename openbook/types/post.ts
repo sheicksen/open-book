@@ -1,6 +1,6 @@
 export type PostTag = "Post" | "Project" | "Tutorial";
 export interface Post {
-     id: number;
+    id: number;
     author: string;
     avatar: string;
     avatarColor: string;

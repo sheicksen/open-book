@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-const navLinks = [,
-  { label: "Profile", href: "/profile" },
+  let navLinks = [
+  { label: "Profile", href: `/profile` },
   { label: "Network", href: "/network" },
   { label: "Communities", href: "/findCommunity" },
-];
+  ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm">
@@ -29,18 +32,26 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
               <Link
-                key={link.label}
-                href={link.href}
+                key={"Communities"}
+                href={"/findCommunity"}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors duration-150"
               >
-                {link.label}
+                {"Communities"}
               </Link>
-            ))}
+              {status=="authenticated"&&
+                <Link
+                key={"Profile"}
+                href={`/profile/${session.user.username}`}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors duration-150"
+              >
+                {"Profile"}
+              </Link>
+              }
           </div>
 
           {/* Desktop CTA */}
+          {!status == "authenticated" &&
           <div className="hidden md:flex items-center gap-3">
             <Link href={"/login"} className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Sign in
@@ -49,6 +60,7 @@ export default function Navbar() {
               Get Started
             </Link>
           </div>
+          }
 
           {/* Mobile Menu Button */}
           <button

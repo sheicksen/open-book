@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { PostTile } from "../../components/posttile"
+import { useRef } from "react";
+import Link from "next/link";
 
 // --- Mock Data ---
 const NEWS_ITEMS = [
@@ -103,7 +105,7 @@ const COMMUNITY_POSTS = [
 ];
 
 // --- Goal Progress Ring ---
-function ProgressRing({ percent = 75 }) {
+function ProgressRing({ percent = 1 }) {
   const r = 52;
   const circ = 2 * Math.PI * r;
   const dash = (percent / 100) * circ;
@@ -114,7 +116,7 @@ function ProgressRing({ percent = 75 }) {
         <circle
           cx="65" cy="65" r={r}
           fill="none"
-          stroke="#4f46e5"
+          stroke="#2e735b"
           strokeWidth="12"
           strokeDasharray={`${dash} ${circ}`}
           strokeLinecap="round"
@@ -126,10 +128,10 @@ function ProgressRing({ percent = 75 }) {
       </svg>
       <div className="text-center">
         <p className="text-sm font-semibold text-gray-700">Monthly Goal</p>
-        <p className="text-xs text-gray-400">15 / 20 tasks complete</p>
+        <p className="text-xs text-gray-400"> / 20 tasks complete</p>
       </div>
       <div className="w-full space-y-1">
-        {[["Contributions", 80], ["Posts", 60], ["Reviews", 40]].map(([label, val]) => (
+        {[["Contributions", 0], ["Posts", 0], ["Reviews", 0]].map(([label, val]) => (
           <div key={label} className="flex items-center gap-2">
             <span className="text-xs text-gray-500 w-20">{label}</span>
             <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -194,74 +196,14 @@ function NewsCarousel() {
   );
 }
 
-// --- Post Tile ---
-function PostTile({post}) {
-  const [liked, setLiked] = useState(false);
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
-      {post.image && (
-        <div className={`h-36 bg-gradient-to-br ${post.imageBg} flex items-center justify-center`}>
-          <span className="text-white/60 text-xs font-medium uppercase tracking-widest">Preview</span>
-        </div>
-      )}
-      <div className="p-4 flex flex-col flex-1 gap-3">
-        {/* Author */}
-        <div className="flex items-center gap-2">
-          <div className={`w-7 h-7 rounded-full ${post.avatarColor} flex items-center justify-center text-white text-xs font-bold`}>
-            {post.avatar}
-          </div>
-          <span className="text-sm font-medium text-gray-800">{post.author}</span>
-          <span className="text-xs text-gray-400 ml-auto">{post.time}</span>
-        </div>
-
-        {/* Content */}
-        <div>
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="text-sm font-semibold text-gray-900 leading-snug">{post.title}</h3>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-none ${post.tagColor}`}>
-              {post.tag}
-            </span>
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{post.body}</p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-4 mt-auto pt-2 border-t border-gray-100">
-          <button
-            onClick={() => setLiked(!liked)}
-            className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${liked ? "text-indigo-600" : "text-gray-400 hover:text-indigo-500"}`}
-          >
-            <svg className="w-4 h-4" fill={liked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            {post.likes + (liked ? 1 : 0)}
-          </button>
-          <button className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            {post.comments}
-          </button>
-          <button className="ml-auto text-xs font-medium text-indigo-500 hover:text-indigo-700 transition-colors">
-            Read more →
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // --- Main Dashboard ---
-export default function CommunityDashboard() {
+export default function CommunityDashboard({content}) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <h1 className="text-lg font-bold text-gray-800">
-          <span className="text-gray-400 font-normal">/community</span> — News & Tutorials
+          <span className="text-gray-400 font-normal">{content.name}</span> — News & Tutorials
         </h1>
       </div>
 
@@ -282,19 +224,19 @@ export default function CommunityDashboard() {
           {/* Goal Progress */}
           <aside className="w-64 flex-none bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Goal Progress</h2>
-            <ProgressRing percent={75} />
+            <ProgressRing percent={1} />
           </aside>
 
           {/* Community Posts */}
           <section className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Community Projects / Posts</h2>
-              <button className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded-lg transition-colors">
+              <Link href={`/createpost/${content.name}`} className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded-lg transition-colors">
                 + New Post
-              </button>
+              </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {COMMUNITY_POSTS.map((post) => (
+              {content.posts.map((post) => (
                 <PostTile key={post.id} post={post} />
               ))}
             </div>

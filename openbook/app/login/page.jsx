@@ -1,35 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-const USERS = [
-  {
-    name: "John",
-    email: "johndoe@anemail.com",
-    password: "12345678"
-  }
-]
-
-
-/**
- * queryUser
- * Finds if a matching user exists in the database
- * Returns the name of the user or incorrect password
- * 
- * TOO BE REPLACED WITH PROPER DATABASE QUERY
- */
-function queryUser({email, password}){
-  const found_users = USERS.filter((user)=>(user.email == email && user.password == password));
-  if (found_users.length > 0){
-    return found_users[0].name;
-  }
-  return "PASS_ERR";
-}
 
 export default function SignupPage() {
   const [form, setForm] = useState({email: "", password: ""});
-  const [name, setName] = useState("");
   const [formError, setFormError] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -40,19 +17,19 @@ export default function SignupPage() {
     form.password.length >= 8 &&
     form.email.includes("@");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (valid){
-      const status = queryUser(form)
-      if ( status != "PASS_ERR"){
-        setName(status);
-        setSubmitted(true);
-      } else {
-        setFormError(true)
-      }
-    }
-  };
-
+  const handleSubmit = async () => {
+  const res = await signIn("credentials", {
+    email: form.email,
+    password: form.password,
+    callbackUrl: "/profile",
+  });
+  if (!res.ok) {
+    const { error } = await res.json();
+    setFormError(error);
+    return;
+  }
+  setSubmitted(true);
+};
   if (submitted) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -63,7 +40,7 @@ export default function SignupPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">You&apos;re in!</h2>
-          <p className="text-sm text-gray-500 mb-6">Welcome back, <span className="font-semibold text-gray-700">{name}</span>.</p>
+          <p className="text-sm text-gray-500 mb-6">Welcome back.</p>
           <Link href="/dashboard" className="block w-full bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2.5 rounded-lg text-center transition-colors">
             Go to Dashboard →
           </Link>
