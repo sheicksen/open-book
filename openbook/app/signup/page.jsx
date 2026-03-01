@@ -8,6 +8,7 @@ export default function SignupPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  
 
   const update = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
