@@ -4,29 +4,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-const USERS = [
-  {
-    name: "John",
-    email: "johndoe@anemail.com",
-    password: "12345678"
-  }
-]
-
-
-/**
- * queryUser
- * Finds if a matching user exists in the database
- * Returns the name of the user or incorrect password
- * 
- * TOO BE REPLACED WITH PROPER DATABASE QUERY
- */
-function queryUser({email, password}){
-  const found_users = USERS.filter((user)=>(user.email == email && user.password == password));
-  if (found_users.length > 0){
-    return found_users[0].name;
-  }
-  return "PASS_ERR";
-}
 
 export default function SignupPage() {
   const [form, setForm] = useState({email: "", password: ""});
